@@ -1,0 +1,52 @@
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 280px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #343a40;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.sidebar-header {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-container .nav-link {
+  color: #adb5bd;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-container .nav-link:hover {
+  color: #ffffff;
+  background-color: #495057;
+}
+
+.sidebar-container .nav-link svg {
+  font-size: 1.1rem;
+}
+
+.submenu {
+  background-color: #212529;
+}
+
+.submenu-item {
+  padding-left: 3rem !important; /* Aumenta la sangría */
+  font-size: 0.9rem;
+}
+
+.sidebar-container .nav-link.border-top {
+    border-top: 1px solid #495057 !important;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
