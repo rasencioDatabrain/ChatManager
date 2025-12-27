@@ -1,33 +1,34 @@
 
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import type { User } from '../data/mockUsers';
+import type { Usuario } from '../pages/UserManagementPage';
 
 interface UserEditModalProps {
   show: boolean;
   onHide: () => void;
-  onSave: (user: User) => void;
-  user: User | null;
+  onSave: (user: Partial<Usuario>) => void;
+  user: Usuario | null;
 }
 
 const UserEditModal: React.FC<UserEditModalProps> = ({ show, onHide, onSave, user }) => {
-  const [formData, setFormData] = useState<Partial<User>>({});
+  const [formData, setFormData] = useState<Partial<Usuario>>({});
 
   useEffect(() => {
     if (user) {
       setFormData(user);
     } else {
-      setFormData({ role: 'Agent', status: 'Active' });
+      // Default values for new user
+      setFormData({ rol: 'usuario', estado: 'activo' });
     }
-  }, [user]);
+  }, [user, show]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSave = () => {
-    onSave(formData as User);
+    onSave(formData);
   };
 
   return (
@@ -41,41 +42,55 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ show, onHide, onSave, use
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
-              name="name"
-              value={formData.name || ''}
+              name="nombre"
+              value={formData.nombre || ''}
               onChange={handleInputChange}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              name="email"
-              value={formData.email || ''}
+              name="correo"
+              value={formData.correo || ''}
               onChange={handleInputChange}
+              required
             />
           </Form.Group>
+          {!user && (
+            <Form.Group className="mb-3">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                name="clave"
+                value={formData.clave || ''}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          )}
           <Form.Group className="mb-3">
             <Form.Label>Rol</Form.Label>
             <Form.Select
-              name="role"
-              value={formData.role || 'Agent'}
+              name="rol"
+              value={formData.rol || 'usuario'}
               onChange={handleInputChange}
             >
-              <option value="Agent">Agent</option>
-              <option value="Supervisor">Supervisor</option>
-              <option value="Admin">Admin</option>
+              <option value="usuario">Usuario</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="admin">Admin</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Estado</Form.Label>
             <Form.Select
-              name="status"
-              value={formData.status || 'Active'}
+              name="estado"
+              value={formData.estado || 'activo'}
               onChange={handleInputChange}
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
             </Form.Select>
           </Form.Group>
         </Form>

@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import type { User } from '../data/mockUsers';
+import type { Usuario } from '../pages/UserManagementPage';
 
 interface UserDeleteModalProps {
   show: boolean;
   onHide: () => void;
   onDelete: () => void;
-  user: User | null;
+  user: Usuario | null;
 }
 
 const UserDeleteModal: React.FC<UserDeleteModalProps> = ({ show, onHide, onDelete, user }) => {
@@ -17,7 +17,7 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({ show, onHide, onDelet
         <Modal.Title>Eliminar Usuario</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        ¿Estás seguro de que deseas eliminar al usuario "<strong>{user?.name}</strong>"?
+        ¿Estás seguro de que deseas eliminar al usuario "<strong>{user?.nombre}</strong>"?
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>

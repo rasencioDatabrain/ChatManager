@@ -16,9 +16,16 @@ import {
 import './Sidebar.css';
 
 import { LinkContainer } from 'react-router-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
   const [openMenu, setOpenMenu] = useState<string | null>('conversations');
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('mockSession');
+    navigate('/');
+  };
 
   const toggleMenu = (menu: string) => {
     setOpenMenu(openMenu === menu ? null : menu);
@@ -141,11 +148,9 @@ const Sidebar: React.FC = () => {
         ))}
       </Nav>
       <Nav className="flex-column mt-auto">
-        <LinkContainer to="/">
-         <Nav.Link className="border-top">
+        <Nav.Link onClick={handleLogout} className="border-top" style={{cursor: 'pointer'}}>
             <FaSignOutAlt className="me-2" /> Cerrar Sesión
         </Nav.Link>
-        </LinkContainer>
       </Nav>
     </div>
   );

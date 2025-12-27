@@ -2,12 +2,12 @@
 import React from 'react';
 import { Table, Button, Badge } from 'react-bootstrap';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import type { User } from '../data/mockUsers';
+import type { Usuario } from '../pages/UserManagementPage';
 
 interface UserListProps {
-  users: User[];
-  onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
+  users: Usuario[];
+  onEdit: (user: Usuario) => void;
+  onDelete: (user: Usuario) => void;
 }
 
 const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete }) => {
@@ -25,12 +25,12 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete }) => {
       <tbody>
         {users.map((user) => (
           <tr key={user.id}>
-            <td>{user.name}</td>
-            <td>{user.email}</td>
-            <td>{user.role}</td>
+            <td>{user.nombre}</td>
+            <td>{user.correo}</td>
+            <td className="text-capitalize">{user.rol}</td>
             <td>
-              <Badge bg={user.status === 'Active' ? 'success' : 'secondary'}>
-                {user.status}
+              <Badge bg={user.estado === 'activo' ? 'success' : 'secondary'} className="text-capitalize">
+                {user.estado}
               </Badge>
             </td>
             <td>
