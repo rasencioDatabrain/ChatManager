@@ -1,33 +1,36 @@
 
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import type { ClientProfileData } from '../data/mockClients';
+import type { Cliente } from '../pages/ClientProfilePage';
 
 interface ClientEditModalProps {
   show: boolean;
   onHide: () => void;
-  onSave: (client: ClientProfileData) => void;
-  client: ClientProfileData | null;
+  onSave: (client: Partial<Cliente>) => void;
+  client: Cliente | null;
 }
 
 const ClientEditModal: React.FC<ClientEditModalProps> = ({ show, onHide, onSave, client }) => {
-  const [formData, setFormData] = useState<Partial<ClientProfileData>>({});
+  const [formData, setFormData] = useState<Partial<Cliente>>({});
 
   useEffect(() => {
     if (client) {
       setFormData(client);
     } else {
-      setFormData({});
+      setFormData({ es_tutor: true });
     }
-  }, [client]);
+  }, [client, show]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ 
+      ...formData, 
+      [name]: type === 'checkbox' ? checked : value 
+    });
   };
 
   const handleSave = () => {
-    onSave(formData as ClientProfileData);
+    onSave(formData);
   };
 
   return (
@@ -40,18 +43,45 @@ const ClientEditModal: React.FC<ClientEditModalProps> = ({ show, onHide, onSave,
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Nombre / Razón Social</Form.Label>
+                <Form.Label>Teléfono (ID de WhatsApp)</Form.Label>
                 <Form.Control
                   type="text"
-                  name="name"
-                  value={formData.name || ''}
+                  name="telefono"
+                  value={formData.telefono || ''}
+                  onChange={handleInputChange}
+                  required
+                  readOnly={!!client} // Prevent editing phone number for existing clients
+                />
+                {!!client && <Form.Text className="text-muted">El teléfono no se puede editar.</Form.Text>}
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Nombre de Perfil (WhatsApp)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="nombre_perfil_wsp"
+                  value={formData.nombre_perfil_wsp || ''}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Nombre Real Completo</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="nombre_real"
+                  value={formData.nombre_real || ''}
                   onChange={handleInputChange}
                 />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Alias / Nombre corto</Form.Label>
+                <Form.Label>Alias (Cómo prefiere ser llamado)</Form.Label>
                 <Form.Control
                   type="text"
                   name="alias"
@@ -64,7 +94,7 @@ const ClientEditModal: React.FC<ClientEditModalProps> = ({ show, onHide, onSave,
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>RUT (si empresa)</Form.Label>
+                <Form.Label>RUT</Form.Label>
                 <Form.Control
                   type="text"
                   name="rut"
@@ -75,20 +105,7 @@ const ClientEditModal: React.FC<ClientEditModalProps> = ({ show, onHide, onSave,
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Teléfono principal (WhatsApp)</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="phone"
-                  value={formData.phone || ''}
-                  onChange={handleInputChange}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Correo electrónico</Form.Label>
+                <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="email"
                   name="email"
@@ -97,24 +114,23 @@ const ClientEditModal: React.FC<ClientEditModalProps> = ({ show, onHide, onSave,
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Ciudad / Región / País</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="location"
-                  value={formData.location || ''}
-                  onChange={handleInputChange}
-                />
-              </Form.Group>
-            </Col>
           </Row>
           <Form.Group className="mb-3">
-            <Form.Label>Zona horaria</Form.Label>
+            <Form.Label>Notas</Form.Label>
             <Form.Control
-              type="text"
-              name="timezone"
-              value={formData.timezone || ''}
+              as="textarea"
+              rows={3}
+              name="notas"
+              value={formData.notas || ''}
+              onChange={handleInputChange as any} // To satisfy textarea change event
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Check 
+              type="checkbox"
+              label="Es tutor/a (útil en pediatría)"
+              name="es_tutor"
+              checked={formData.es_tutor ?? true}
               onChange={handleInputChange}
             />
           </Form.Group>

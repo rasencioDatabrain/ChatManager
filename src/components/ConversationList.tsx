@@ -10,8 +10,8 @@ interface ConversationListProps {
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ onSelectConversation }) => {
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'closed'>('all');
-  const [modeFilter, setModeFilter] = useState<'all' | 'manual' | 'automatico'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'closed'>('active');
+  const [modeFilter, setModeFilter] = useState<'all' | 'manual' | 'automatico'>('manual');
   const [conversations, setConversations] = useState<AppConversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,9 +92,9 @@ const ConversationList: React.FC<ConversationListProps> = ({ onSelectConversatio
         <Form.Group className="mb-3">
           <Form.Label>Filtrar por Estado</Form.Label>
           <ButtonGroup className="w-100 filter-buttons">
-            <Button variant={filterStatus === 'all' ? 'primary' : 'outline-primary'} onClick={() => setFilterStatus('all')}>Todos</Button>
             <Button variant={filterStatus === 'active' ? 'primary' : 'outline-primary'} onClick={() => setFilterStatus('active')}>Activos</Button>
             <Button variant={filterStatus === 'closed' ? 'primary' : 'outline-primary'} onClick={() => setFilterStatus('closed')}>Cerrados</Button>
+            <Button variant={filterStatus === 'all' ? 'primary' : 'outline-primary'} onClick={() => setFilterStatus('all')}>Todos</Button>
           </ButtonGroup>
         </Form.Group>
 
@@ -102,9 +102,9 @@ const ConversationList: React.FC<ConversationListProps> = ({ onSelectConversatio
           <Form.Group>
             <Form.Label>Filtrar por Modo</Form.Label>
             <ButtonGroup className="w-100 filter-buttons">
-              <Button variant={modeFilter === 'all' ? 'info' : 'outline-info'} onClick={() => setModeFilter('all')}>Todos</Button>
               <Button variant={modeFilter === 'manual' ? 'info' : 'outline-info'} onClick={() => setModeFilter('manual')}>Manual</Button>
               <Button variant={modeFilter === 'automatico' ? 'info' : 'outline-info'} onClick={() => setModeFilter('automatico')}>Automático</Button>
+              <Button variant={modeFilter === 'all' ? 'info' : 'outline-info'} onClick={() => setModeFilter('all')}>Todos</Button>
             </ButtonGroup>
           </Form.Group>
         )}

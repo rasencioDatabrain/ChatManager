@@ -15,6 +15,7 @@ import BulkMessagePage from './pages/BulkMessagePage';
 import DashboardHomePage from './pages/DashboardHomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import PlaceholderPage from './pages/PlaceholderPage';
 
 const App: React.FC = () => {
   return (
@@ -36,6 +37,7 @@ const App: React.FC = () => {
             <Route path="message-templates" element={<MessageTemplatesPage />} />
             <Route path="schedule-configuration" element={<ScheduleConfigurationPage />} />
             <Route path="reports" element={<ReportsPage />} />
+            <Route path="tags" element={<PlaceholderPage />} />
           </Route>
         </Route>
       </Routes>

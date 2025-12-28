@@ -51,7 +51,7 @@ const Sidebar: React.FC = () => {
       subItems: [
         { key: 'details', title: 'Mostrar datos básicos', path: '/dashboard/client-profile' },
         { key: 'history', title: 'Ver historial', path: '/dashboard/history' },
-        { key: 'tags', title: 'Añadir etiquetas o notas', path: '' },
+        { key: 'tags', title: 'Añadir etiquetas o notas', path: '/dashboard/tags' },
       ],
     },
     {

@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import type { ClientProfileData } from '../data/mockClients';
+import type { Cliente } from '../pages/ClientProfilePage';
 
 interface ClientDeleteModalProps {
   show: boolean;
   onHide: () => void;
   onDelete: () => void;
-  client: ClientProfileData | null;
+  client: Cliente | null;
 }
 
 const ClientDeleteModal: React.FC<ClientDeleteModalProps> = ({ show, onHide, onDelete, client }) => {
@@ -17,7 +17,7 @@ const ClientDeleteModal: React.FC<ClientDeleteModalProps> = ({ show, onHide, onD
         <Modal.Title>Eliminar Cliente</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        ¿Estás seguro de que deseas eliminar al cliente "<strong>{client?.name}</strong>"?
+        ¿Estás seguro de que deseas eliminar al cliente "<strong>{client?.nombre_real || client?.telefono}</strong>"?
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>

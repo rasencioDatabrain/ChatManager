@@ -1,49 +1,121 @@
 
-import React, { useState } from 'react';
-import { Container, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Button, Spinner, Alert } from 'react-bootstrap';
 import ClientList from '../components/ClientList';
 import ClientEditModal from '../components/ClientEditModal';
 import ClientDeleteModal from '../components/ClientDeleteModal';
-import { mockClients } from '../data/mockClients';
-import type { ClientProfileData } from '../data/mockClients';
+import { supabase } from '../supabaseClient';
+
+// Define the Client type based on the database schema
+export interface Cliente {
+  id: string; // UUID
+  telefono: string;
+  nombre_perfil_wsp?: string | null;
+  nombre_real?: string | null;
+  alias?: string | null;
+  rut?: string | null;
+  email?: string | null;
+  notas?: string | null;
+  es_tutor?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
 
 const ClientProfilePage: React.FC = () => {
-  const [clients, setClients] = useState<ClientProfileData[]>(mockClients);
-  const [selectedClient, setSelectedClient] = useState<ClientProfileData | null>(null);
+  const [clients, setClients] = useState<Cliente[]>([]);
+  const [selectedClient, setSelectedClient] = useState<Cliente | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchClients = async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase
+      .from('clientes')
+      .select('*')
+      .order('nombre_real', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching clients:', error);
+      setError('No se pudieron cargar los clientes.');
+    } else {
+      setClients(data as Cliente[]);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchClients();
+
+    const subscription = supabase.channel('custom-clientes-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'clientes' },
+        (payload) => {
+          fetchClients();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, []);
 
   const handleAddClient = () => {
     setSelectedClient(null);
     setShowEditModal(true);
   };
 
-  const handleEditClient = (client: ClientProfileData) => {
+  const handleEditClient = (client: Cliente) => {
     setSelectedClient(client);
     setShowEditModal(true);
   };
 
-  const handleDeleteClient = (client: ClientProfileData) => {
+  const handleDeleteClient = (client: Cliente) => {
     setSelectedClient(client);
     setShowDeleteModal(true);
   };
 
-  const handleSaveClient = (client: ClientProfileData) => {
-    if (client.id) {
-      // Edit
-      setClients(clients.map((c) => (c.id === client.id ? client : c)));
-    } else {
-      // Add
-      const newClient = { ...client, id: Math.max(...clients.map(c => c.id)) + 1 };
-      setClients([...clients, newClient]);
+  const handleSaveClient = async (client: Partial<Cliente>) => {
+    try {
+      const clientData = { ...client, updated_at: new Date().toISOString() };
+      if (client.id) {
+        // Edit client
+        const { error } = await supabase
+          .from('clientes')
+          .update(clientData)
+          .eq('id', client.id);
+        if (error) throw error;
+      } else {
+        // Add new client
+        const { error } = await supabase
+          .from('clientes')
+          .insert(clientData);
+        if (error) throw error;
+      }
+      setShowEditModal(false);
+      fetchClients(); // Manual refresh
+    } catch (error: any) {
+      alert(`Error al guardar el cliente: ${error.message}`);
     }
-    setShowEditModal(false);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedClient) {
-      setClients(clients.filter((c) => c.id !== selectedClient.id));
-      setShowDeleteModal(false);
+      try {
+        const { error } = await supabase
+          .from('clientes')
+          .delete()
+          .eq('id', selectedClient.id);
+        if (error) throw error;
+        setShowDeleteModal(false);
+        fetchClients(); // Manual refresh
+      } catch (error: any) {
+        alert(`Error al eliminar el cliente: ${error.message}`);
+      }
     }
   };
 
@@ -56,7 +128,11 @@ const ClientProfilePage: React.FC = () => {
         </Button>
       </div>
       
-      <ClientList clients={clients} onEdit={handleEditClient} onDelete={handleDeleteClient} />
+      {loading && <div className="text-center"><Spinner animation="border" /></div>}
+      {error && <Alert variant="danger">{error}</Alert>}
+      {!loading && !error && (
+        <ClientList clients={clients} onEdit={handleEditClient} onDelete={handleDeleteClient} />
+      )}
 
       <ClientEditModal
         show={showEditModal}
