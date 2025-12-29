@@ -38,6 +38,9 @@ const App: React.FC = () => {
             <Route path="schedule-configuration" element={<ScheduleConfigurationPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="tags" element={<PlaceholderPage />} />
+            <Route path="auto-reply" element={<PlaceholderPage />} />
+            <Route path="auto-transfer" element={<PlaceholderPage />} />
+            <Route path="scheduled-messages" element={<PlaceholderPage />} />
           </Route>
         </Route>
       </Routes>

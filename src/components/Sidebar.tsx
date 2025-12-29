@@ -59,9 +59,9 @@ const Sidebar: React.FC = () => {
         title: 'Bot y Automatización',
         icon: <FaRobot className="me-2" />,
         subItems: [
-            { key: 'auto-reply', title: 'Respuestas automáticas', path: '' },
-            { key: 'transfer', title: 'Transferencia automática', path: '' },
-            { key: 'scheduled', title: 'Mensajes programados', path: '' },
+            { key: 'auto-reply', title: 'Respuestas automáticas', path: '/dashboard/auto-reply' },
+            { key: 'transfer', title: 'Transferencia automática', path: '/dashboard/auto-transfer' },
+            { key: 'scheduled', title: 'Mensajes programados', path: '/dashboard/scheduled-messages' },
         ],
     },
     {
