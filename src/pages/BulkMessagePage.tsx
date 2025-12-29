@@ -1,57 +1,57 @@
-import React, { useState, useMemo } from 'react';
-import { Container, Form, Button, Card, Row, Col, Image, Alert, Tabs, Tab } from 'react-bootstrap';
-import { mockUserGroups } from '../data/mockUserGroups';
-import type { GroupMember } from '../data/mockUserGroups'; // Import GroupMember type
-import { mockAutomaticGroupTemplates } from '../data/mockAutomaticGroups';
-import { mockConversations } from '../data/mockConversations'; // Needed for simulation
-import { mockBulkMessageHistory } from '../data/mockBulkMessageHistory';
-import type { BulkMessageHistoryEntry } from '../data/mockBulkMessageHistory';
+import React, { useState, useEffect } from 'react';
+import { Container, Form, Button, Card, Row, Col, Image, Alert, Tabs, Tab, Spinner } from 'react-bootstrap';
+import { supabase } from '../supabaseClient';
 import BulkMessageHistory from '../components/BulkMessageHistory';
 import BulkHistoryDetailsModal from '../components/BulkHistoryDetailsModal';
 import { FaPaperPlane } from 'react-icons/fa';
+import type { BulkMessageHistoryEntry } from '../data/mockBulkMessageHistory'; // Keep this for now for the history tab
+
+// --- Type Definitions ---
+interface Group {
+  id: number;
+  nombre: string;
+  tipo: 'manual' | 'automatico';
+}
 
 const BulkMessagePage: React.FC = () => {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loadingGroups, setLoadingGroups] = useState(true);
   const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
   const [message, setMessage] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [history, setHistory] = useState<BulkMessageHistoryEntry[]>(mockBulkMessageHistory);
-
+  
+  // History tab state (can be refactored later)
+  const [history, setHistory] = useState<BulkMessageHistoryEntry[]>([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<BulkMessageHistoryEntry | null>(null);
 
-  const allGroups = useMemo(() => {
-    const manualGroups = mockUserGroups.map(g => ({ ...g, type: 'manual' as const, members: g.members }));
-    
-    const automaticGroups = mockAutomaticGroupTemplates
-      .filter(t => t.isActive)
-      .map(t => {
-        let members: GroupMember[] = [];
-        if (t.id === 'auto-group-4') { // Clientes de Chile
-          members = mockConversations
-            .filter(c => c.customerPhone.startsWith('+56'))
-            .map(c => ({ id: `sim-${c.id}`, name: c.customerName, phone: c.customerPhone }));
-        }
-        // Add more simulation logic for other automatic groups here if needed
-        return {
-          id: t.id,
-          name: t.title,
-          type: 'auto' as const,
-          members: members,
-        };
-      });
+  useEffect(() => {
+    const fetchGroups = async () => {
+      setLoadingGroups(true);
+      const { data, error } = await supabase
+        .from('grupos_clientes')
+        .select('id, nombre, tipo')
+        .eq('estado', 'activo');
 
-    return [...manualGroups, ...automaticGroups];
+      if (data) {
+        setGroups(data);
+      } else {
+        console.error('Error fetching groups:', error);
+      }
+      setLoadingGroups(false);
+    };
+
+    fetchGroups();
+    // TODO: Fetch real history data
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setImages(filesArray);
-
       imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
-
       const previews = filesArray.map(file => URL.createObjectURL(file));
       setImagePreviews(previews);
     }
@@ -64,19 +64,20 @@ const BulkMessagePage: React.FC = () => {
     }
     setSendStatus('sending');
     
-    const targetGroup = allGroups.find(g => g.id === selectedGroupId);
-    const groupName = targetGroup?.name || 'Grupo Desconocido';
-    const groupMembers = targetGroup?.members || [];
-
+    // This part is still a simulation
+    const targetGroup = groups.find(g => g.id === parseInt(selectedGroupId));
+    console.log(`Simulating sending message to group: ${targetGroup?.nombre}`);
+    
     setTimeout(() => {
+      // Add to history (simulation)
       const newHistoryEntry: BulkMessageHistoryEntry = {
         id: `hist-${Date.now()}`,
-        groupName: groupName,
+        groupName: targetGroup?.nombre || 'Grupo Desconocido',
         message: message,
         timestamp: new Date(),
         status: 'Sent',
         attachmentCount: images.length,
-        members: groupMembers,
+        members: [], // Member list not fetched in this version
       };
       setHistory(prevHistory => [newHistoryEntry, ...prevHistory]);
 
@@ -113,14 +114,16 @@ const BulkMessagePage: React.FC = () => {
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>1. Selecciona un Grupo de Destino</Form.Label>
-                    <Form.Select value={selectedGroupId} onChange={e => setSelectedGroupId(e.target.value)}>
-                      <option value="all" disabled>-- Elige un grupo --</option>
-                      {allGroups.map(group => (
-                        <option key={group.id} value={group.id}>
-                          {group.name} ({group.type === 'manual' ? 'Manual' : 'Auto'})
-                        </option>
-                      ))}
-                    </Form.Select>
+                    {loadingGroups ? <Spinner size="sm" /> : (
+                      <Form.Select value={selectedGroupId} onChange={e => setSelectedGroupId(e.target.value)}>
+                        <option value="all" disabled>-- Elige un grupo --</option>
+                        {groups.map(group => (
+                          <option key={group.id} value={group.id}>
+                            {group.nombre} ({group.tipo === 'manual' ? 'Manual' : 'Auto'})
+                          </option>
+                        ))}
+                      </Form.Select>
+                    )}
                   </Form.Group>
 
                   <Form.Group className="mb-3">

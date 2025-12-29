@@ -55,16 +55,6 @@ const Sidebar: React.FC = () => {
       ],
     },
     {
-        key: 'agents',
-        title: 'Módulo de Agentes',
-        icon: <FaUsers className="me-2" />,
-        subItems: [
-            { key: 'assign-reasign', title: 'Asignar o reasignar', path: '' },
-            { key: 'roles', title: 'Control de roles', path: '' },
-            { key: 'filters', title: 'Filtros', path: '' },
-        ],
-    },
-    {
         key: 'automation',
         title: 'Bot y Automatización',
         icon: <FaRobot className="me-2" />,
