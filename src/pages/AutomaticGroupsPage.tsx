@@ -1,18 +1,23 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Col, Card, Form } from 'react-bootstrap';
-import { mockAutomaticGroupTemplates } from '../data/mockAutomaticGroups';
-import type { AutomaticGroupTemplate } from '../data/mockAutomaticGroups';
+
+const automaticGroupTemplates = [
+  {
+    id: 'auto-group-1',
+    title: 'Clientes Frecuentes',
+    description: 'Agrupa automáticamente a clientes que contactan más de 5 veces por semana.',
+    category: 'Frecuencia',
+  },
+  {
+    id: 'auto-group-4',
+    title: 'Clientes de Chile',
+    description: 'Agrupa a todos los números que comienzan con el prefijo +56.',
+    category: 'Ubicación',
+  },
+];
 
 const AutomaticGroupsPage: React.FC = () => {
-  const [templates, setTemplates] = useState<AutomaticGroupTemplate[]>(mockAutomaticGroupTemplates);
-
-  const handleToggle = (templateId: string) => {
-    setTemplates(templates.map(t => 
-      t.id === templateId ? { ...t, isActive: !t.isActive } : t
-    ));
-  };
-
   return (
     <Container fluid className="p-4">
       <div className="mb-4">
@@ -23,7 +28,7 @@ const AutomaticGroupsPage: React.FC = () => {
       </div>
 
       <Row>
-        {templates.map(template => (
+        {automaticGroupTemplates.map(template => (
           <Col key={template.id} md={6} lg={4} className="mb-4">
             <Card className="h-100">
               <Card.Body className="d-flex flex-column">
@@ -36,9 +41,10 @@ const AutomaticGroupsPage: React.FC = () => {
                   <Form.Check 
                     type="switch"
                     id={`switch-${template.id}`}
-                    label={template.isActive ? 'Activado' : 'Desactivado'}
-                    checked={template.isActive}
-                    onChange={() => handleToggle(template.id)}
+                    label={'Desactivado'}
+                    checked={false}
+                    disabled
+                    onChange={() => {}} // Prevent console warnings on disabled controlled components
                   />
                 </Form>
               </Card.Body>

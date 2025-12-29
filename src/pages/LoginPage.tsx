@@ -1,13 +1,15 @@
 
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button, Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Spinner, Alert, InputGroup } from 'react-bootstrap';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -38,6 +40,8 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
   return (
     <Container fluid className="vh-100 bg-light d-flex justify-content-center align-items-center">
       <Col xxl={8} xl={9} lg={10}>
@@ -61,13 +65,18 @@ const LoginPage: React.FC = () => {
 
                   <Form.Group className="mb-4" controlId="formBasicPassword">
                     <Form.Label>Contraseña</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Contraseña"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
+                    <InputGroup>
+                      <Form.Control
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Contraseña"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                      <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }}>
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </InputGroup.Text>
+                    </InputGroup>
                   </Form.Group>
 
                   {error && <Alert variant="danger">{error}</Alert>}
