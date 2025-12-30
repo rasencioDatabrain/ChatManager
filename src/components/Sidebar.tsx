@@ -70,7 +70,7 @@ const Sidebar: React.FC = () => {
         icon: <FaChartBar className="me-2" />,
         subItems: [
             { key: 'volume', title: 'Volumen de conversaciones', path: '/dashboard/reports' },
-            { key: 'times', title: 'Tiempos de respuesta', path: '' },
+            { key: 'times', title: 'Tiempos de respuesta', path: '/dashboard/reports/response-times' },
             { key: 'tags-used', title: 'Etiquetas más utilizadas', path: '' },
         ],
     },

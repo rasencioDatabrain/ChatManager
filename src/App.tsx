@@ -6,6 +6,7 @@ import ConversationsPage from './pages/ConversationsPage';
 import UserGroupsPage from './pages/UserGroupsPage';
 import AutomaticGroupsPage from './pages/AutomaticGroupsPage';
 import ReportsPage from './pages/ReportsPage';
+import ResponseTimesPage from './pages/ResponseTimesPage';
 import ScheduleConfigurationPage from './pages/ScheduleConfigurationPage';
 import MessageTemplatesPage from './pages/MessageTemplatesPage';
 import UserManagementPage from './pages/UserManagementPage';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
             <Route path="message-templates" element={<MessageTemplatesPage />} />
             <Route path="schedule-configuration" element={<ScheduleConfigurationPage />} />
             <Route path="reports" element={<ReportsPage />} />
+            <Route path="reports/response-times" element={<ResponseTimesPage />} />
             <Route path="tags" element={<PlaceholderPage />} />
             <Route path="auto-reply" element={<PlaceholderPage />} />
             <Route path="auto-transfer" element={<PlaceholderPage />} />
